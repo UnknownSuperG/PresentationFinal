@@ -1,4 +1,3 @@
-// Combined backend using MongoDB Native Driver + Mongoose
 const express = require('express');
 const mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -8,19 +7,22 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Serve static frontend files
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Ensure uploads folder exists
 if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads');
 }
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Multer Setup - keep original file names (optional)
+// Multer Setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
   filename: (req, file, cb) => {
@@ -30,15 +32,12 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// MongoDB Setup
+// MongoDB setup
 const mongoURI = 'mongodb+srv://yuvamloonker:Yuvam2920@internship.p6qchsl.mongodb.net/internship?retryWrites=true&w=majority&appName=internship';
 const dbName = 'premier_energies';
 const collectionName = 'material_trials';
 
-mongoose.connect(mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log('✅ Mongoose connected'))
+mongoose.connect(mongoURI).then(() => console.log('✅ Mongoose connected'))
   .catch(err => console.error('❌ Mongoose connection failed:', err));
 
 const RequestSchema = new mongoose.Schema({
@@ -66,7 +65,8 @@ const RequestSchema = new mongoose.Schema({
   deliveryPerson: String,
   evaluationDate: String,
   evaluationReport: String,
-  cmkRemarks: String
+  cmkRemarks: String,
+  remarksAgainstOrder: String
 }, { timestamps: true });
 
 const Request = mongoose.model('Request', RequestSchema);
@@ -107,8 +107,7 @@ MongoClient.connect(mongoURI)
             deliveryFile: '',
             deliveryPerson: '',
             evaluationDate: '',
-            evaluationReport: '',
-            cmkRemarks: ''
+            evaluationReport: ''
           }
         ]);
       }
@@ -120,7 +119,6 @@ MongoClient.connect(mongoURI)
 
 // ----- Routes -----
 
-// GET all requests
 app.get('/api/requests', async (req, res) => {
   try {
     const requests = await Request.find().sort({ createdAt: -1 });
@@ -130,7 +128,6 @@ app.get('/api/requests', async (req, res) => {
   }
 });
 
-// GET single request by ID
 app.get('/api/requests/:id', async (req, res) => {
   try {
     const request = await Request.findById(req.params.id);
@@ -141,7 +138,6 @@ app.get('/api/requests/:id', async (req, res) => {
   }
 });
 
-// POST new request
 app.post('/api/requests', async (req, res) => {
   try {
     const filledRequest = {
@@ -155,7 +151,6 @@ app.post('/api/requests', async (req, res) => {
       deliveryPerson: "",
       evaluationDate: "",
       evaluationReport: "",
-      cmkRemarks: "",
       ...req.body
     };
 
@@ -167,14 +162,14 @@ app.post('/api/requests', async (req, res) => {
   }
 });
 
-// PUT update request
 app.put(['/api/requests/:id', '/api/trials/:id'], async (req, res) => {
   try {
     const allowedFields = [
       'date', 'category', 'details', 'supplier', 'quantity', 'trial', 'purpose', 'purposeOther',
       'bisRequired', 'bisCost', 'bisCostBy', 'iecRequired', 'iecCost', 'iecCostBy',
       'status', 'prNumber', 'materialCode', 'materialDescription', 'deliveryDate', 'remarks',
-      'deliveryFile', 'deliveryPerson', 'evaluationDate', 'evaluationReport', 'cmkRemarks'
+      'deliveryFile', 'deliveryPerson', 'evaluationDate', 'evaluationReport',
+      'cmkRemarks', 'remarksAgainstOrder'
     ];
 
     const updateFields = {};
@@ -198,7 +193,6 @@ app.put(['/api/requests/:id', '/api/trials/:id'], async (req, res) => {
   }
 });
 
-// POST file upload for proof of delivery
 app.post('/api/requests/upload/:id', upload.single('file'), async (req, res) => {
   try {
     const { deliveryPerson } = req.body;
@@ -218,7 +212,6 @@ app.post('/api/requests/upload/:id', upload.single('file'), async (req, res) => 
   }
 });
 
-// POST file upload for evaluation report
 app.post('/api/requests/evaluation/:id', upload.single('file'), async (req, res) => {
   try {
     const { evaluationDate } = req.body;
@@ -238,7 +231,6 @@ app.post('/api/requests/evaluation/:id', upload.single('file'), async (req, res)
   }
 });
 
-// Native driver route
 app.get('/api/trials', async (req, res) => {
   try {
     const trials = await nativeDB.collection(collectionName).find({}).toArray();
@@ -246,6 +238,11 @@ app.get('/api/trials', async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Error fetching trials', error });
   }
+});
+
+// 🟢 Serve index.html for unmatched routes (Single Page App support)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start server

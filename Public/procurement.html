@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Management</title>
+  <style>
+    .hamburger {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 1100; /* Higher than sidebar to stay on top */
+  color: #000000;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -250px;
+  width: 250px;
+  height: 100%;
+  background-color: #1a237e;
+  color: white;
+  padding-top: 60px;
+  transition: right 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar a {
+  padding: 15px 25px;
+  text-decoration: none;
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sidebar a:hover {
+  background-color: #303f9f;
+}
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 30px;
+      background-color: #f4f6f9;
+      color: #333;
+    }
+
+    h2 {
+      color: #1a237e;
+      font-size: 24px;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #1a237e;
+      text-align: center;
+      width: 100%;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #e8eaf6;
+      font-weight: bold;
+    }
+
+    .order-btn {
+      background-color: #3f51b5;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 60%;
+      max-width: 700px;
+    }
+
+    .modal-content h3 {
+      margin-top: 0;
+      color: #3f51b5;
+      border-bottom: 2px solid #3f51b5;
+      padding-bottom: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .submit-btn {
+      padding: 10px 20px;
+      background-color: #1e88e5;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .close-btn {
+      float: right;
+      font-size: 20px;
+      cursor: pointer;
+      color: red;
+    }
+
+    .checkbox-inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+   <div class="hamburger" onclick="toggleMenu()">☰</div>
+
+<div id="sidebar" class="sidebar">
+  <a href="request.html">Requestor - Submit Material Trial Request</a>
+  <a href="cmk.html">CMK - Review & Approve Request</a>
+  <a href="ppc.html">PPC - PR Management</a>
+  <a href="procurement.html">Procurement - Ordering and Tracking</a>
+  <a href="stores.html">Stores Team</a>
+  <a href="evaluation.html">Evaluation Team - Material Receipt & Evaluation</a>
+  <a href="cmk2.html">CMK - Final Review and Remarks</a>
+</div>
+  <h2>Procurement - Ordering and Tracking</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th><th>Category</th><th>Details</th><th>Supplier</th><th>Quantity</th><th>Trial</th>
+        <th>Purpose</th><th>BIS Required</th><th>BIS Cost</th><th>BIS Cost By</th>
+        <th>IEC Required</th><th>IEC Cost</th><th>IEC Cost By</th>
+        <th>Status</th><th>PR Number</th><th>Material Code</th><th>Material Description</th>
+        <th>Est. Delivery</th><th>Remarks</th><th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="orderTable"></tbody>
+  </table>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <h3>Order Information</h3>
+      <div class="form-group">
+        <label>Estimated Delivery Date</label>
+        <input type="date" id="deliveryDate" />
+      </div>
+      <div class="form-group">
+        <label>Remarks</label>
+        <textarea id="remarks" rows="3"></textarea>
+      </div>
+      <div class="form-group checkbox-inline">
+        <input type="checkbox" id="deliveredCheckbox" />
+        <label for="deliveredCheckbox">Delivered</label>
+      </div>
+      <button class="submit-btn" onclick="submitOrder()">Submit</button>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000/api/requests';
+    let currentId = null;
+
+    async function fetchOrders() {
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      const table = document.getElementById('orderTable');
+      table.innerHTML = '';
+
+      data
+        .filter(r =>
+          r.status === 'Sent to Procurement for Ordering' ||
+          r.status === 'Ordered' ||
+          r.status === 'Delivered'
+        )
+        .forEach(req => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${req.date || ''}</td>
+            <td>${req.category || ''}</td>
+            <td>${req.details || ''}</td>
+            <td>${req.supplier || ''}</td>
+            <td>${req.quantity || ''}</td>
+            <td>${req.trial || ''}</td>
+            <td>${req.purpose || ''}</td>
+            <td>${req.bisRequired ? 'Yes' : 'No'}</td>
+            <td>${req.bisCost ?? ''}</td>
+            <td>${req.bisCostBy || ''}</td>
+            <td>${req.iecRequired ? 'Yes' : 'No'}</td>
+            <td>${req.iecCost ?? ''}</td>
+            <td>${req.iecCostBy || ''}</td>
+            <td>${req.status || ''}</td>
+            <td>${req.prNumber || ''}</td>
+            <td>${req.materialCode || ''}</td>
+            <td>${req.materialDescription || ''}</td>
+            <td>${req.deliveryDate || ''}</td>
+            <td>${req.remarks || ''}</td>
+            <td><button class="order-btn" onclick="openModal('${req._id}')">Order</button></td>
+          `;
+          table.appendChild(row);
+        });
+    }
+
+    async function openModal(id) {
+  currentId = id;
+
+  // Fetch existing data for that request
+  const res = await fetch(`${API_URL}/${id}`);
+  const req = await res.json();
+
+  // Pre-fill the fields with existing data (if any)
+  document.getElementById('deliveryDate').value = req.deliveryDate || '';
+  document.getElementById('remarks').value = req.remarks || '';
+  document.getElementById('deliveredCheckbox').checked = req.status === 'Delivered';
+
+  // Show modal
+  document.getElementById('modal').style.display = 'block';
+}
+
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+      document.getElementById('deliveryDate').value = '';
+      document.getElementById('remarks').value = '';
+      document.getElementById('deliveredCheckbox').checked = false;
+    }
+
+    async function submitOrder() {
+      const deliveryDate = document.getElementById('deliveryDate').value;
+      const remarks = document.getElementById('remarks').value;
+      const delivered = document.getElementById('deliveredCheckbox').checked;
+      const status = delivered ? 'Delivered' : 'Ordered';
+
+      await fetch(`${API_URL}/${currentId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deliveryDate, remarks, delivered, status })
+      });
+
+      closeModal();
+      fetchOrders();
+    }
+
+    fetchOrders();
+    function toggleMenu() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.style.right = sidebar.style.right === '0px' ? '-100%' : '0px';
+}
+  </script>
+</body>
+</html>
