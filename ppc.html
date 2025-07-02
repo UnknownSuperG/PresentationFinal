@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Procurement Forward Page</title>
+  <style>
+      .hamburger {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 1100;
+  color: #000000;
+  padding: 4px 10px;
+  background: none;      
+  border: none;         
+  box-shadow: none;      
+  outline: none;         
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -250px;
+  width: 250px;
+  height: 100%;
+  background-color: #1a237e;
+  color: white;
+  padding-top: 60px;
+  transition: right 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar a {
+  padding: 15px 25px;
+  text-decoration: none;
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sidebar a:hover {
+  background-color: #303f9f;
+}
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 30px;
+      background-color: #f4f6f9;
+      color: #333;
+    }
+
+    h2 {
+      text-align: center;
+      color: #1a237e;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #1a237e;
+      padding-bottom: 10px;
+      font-size: 24px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #e8eaf6;
+      font-weight: bold;
+    }
+
+    .forward-btn {
+      background-color: #3f51b5;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 60%;
+      max-width: 700px;
+    }
+
+    .modal-content h3 {
+      margin-top: 0;
+      color: #3f51b5;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .submit-btn {
+      padding: 10px 20px;
+      background-color: #1e88e5;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .close-btn {
+      float: right;
+      font-size: 20px;
+      cursor: pointer;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+<div class="hamburger" onclick="toggleMenu()">☰</div>
+
+<div id="sidebar" class="sidebar">
+  <a href="request.html">Requestor - Submit Material Trial Request</a>
+  <a href="cmk.html">CMK - Review & Approve Request</a>
+  <a href="ppc.html">PPC - PR Management</a>
+  <a href="procurement.html">Procurement - Ordering and Tracking</a>
+  <a href="stores.html">Stores Team</a>
+  <a href="evaluation.html">Evaluation Team - Material Receipt & Evaluation</a>
+  <a href="cmk2.html">CMK - Final Review and Remarks</a>
+</div>
+
+<h2>PPC - PR Management</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Date</th><th>Category</th><th>Details</th><th>Supplier</th><th>Quantity</th><th>Trial</th>
+      <th>Purpose</th><th>BIS Required</th><th>BIS Cost</th><th>BIS Cost By</th>
+      <th>IEC Required</th><th>IEC Cost</th><th>IEC Cost By</th>
+      <th>Status</th><th>PR Number</th><th>Material Code</th><th>Material Description</th><th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="requestTable"></tbody>
+</table>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <h3>Enter Procurement Details</h3>
+    <div class="form-group">
+      <label>PR Number</label>
+      <input type="text" id="prNumber" required />
+    </div>
+    <div class="form-group">
+      <label>Material Code</label>
+      <input type="text" id="materialCode" required />
+    </div>
+    <div class="form-group">
+      <label>Material Description</label>
+      <input type="text" id="materialDescription" required />
+    </div>
+    <button class="submit-btn" onclick="submitProcurement()">Submit</button>
+  </div>
+</div>
+
+<script>
+  const API_URL = 'http://localhost:3000/api/requests';
+  let currentId = null;
+
+  async function fetchRequests() {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+    const table = document.getElementById('requestTable');
+    table.innerHTML = '';
+
+    data
+      .filter(r => r.status === 'Approved for Trial Run' || r.status === 'Approved for Pilot Run' || r.status === 'Sent to Procurement for Ordering')
+      .forEach(req => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${req.date || ''}</td>
+          <td>${req.category || ''}</td>
+          <td>${req.details || ''}</td>
+          <td>${req.supplier || ''}</td>
+          <td>${req.quantity || ''}</td>
+          <td>${req.trial || ''}</td>
+          <td>${req.purpose || ''}</td>
+          <td>${req.bisRequired ? 'Yes' : 'No'}</td>
+          <td>${req.bisCost ?? ''}</td>
+          <td>${req.bisCostBy || ''}</td>
+          <td>${req.iecRequired ? 'Yes' : 'No'}</td>
+          <td>${req.iecCost ?? ''}</td>
+          <td>${req.iecCostBy || ''}</td>
+          <td>${req.status}</td>
+          <td>${req.prNumber || ''}</td>
+          <td>${req.materialCode || ''}</td>
+          <td>${req.materialDescription || ''}</td>
+          <td><button class="forward-btn" onclick="openModal('${req._id}')">Forward</button></td>
+        `;
+        table.appendChild(row);
+      });
+  }
+
+  function openModal(id) {
+    currentId = id;
+    document.getElementById('modal').style.display = 'block';
+  }
+
+  function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+    document.getElementById('prNumber').value = '';
+    document.getElementById('materialCode').value = '';
+    document.getElementById('materialDescription').value = '';
+  }
+
+  async function submitProcurement() {
+    const prNumber = document.getElementById('prNumber').value;
+    const materialCode = document.getElementById('materialCode').value;
+    const materialDescription = document.getElementById('materialDescription').value;
+
+    if (!prNumber || !materialCode || !materialDescription) {
+      alert('Please fill all fields.');
+      return;
+    }
+
+    await fetch(`${API_URL}/${currentId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status: 'Sent to Procurement for Ordering',
+        prNumber,
+        materialCode,
+        materialDescription
+      })
+    });
+
+    closeModal();
+    fetchRequests();
+  }
+
+  fetchRequests();
+
+  function toggleMenu() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.style.right = sidebar.style.right === '0px' ? '-100%' : '0px';
+}
+</script>
+
+</body>
+</html>
