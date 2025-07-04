@@ -3,56 +3,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Delivered / Ordered Records</title>
+  <title>Sample Trials</title>
   <style>
-     .hamburger {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  font-size: 28px;
-  cursor: pointer;
-  z-index: 1100; /* Higher than sidebar to stay on top */
-  color: #000000;
-  padding: 4px 10px;
-  border-radius: 4px;
-}
-
-.sidebar {
-  position: fixed;
-  top: 0;
-  right: -250px;
-  width: 250px;
-  height: 100%;
-  background-color: #1a237e;
-  color: white;
-  padding-top: 60px;
-  transition: right 0.3s ease;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar a {
-  padding: 15px 25px;
-  text-decoration: none;
-  color: white;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.sidebar a:hover {
-  background-color: #303f9f;
-}
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #f4f6f9;
-      color: #333;
+      background-color: #121212;
+      color: #ffffff;
       margin: 0;
       padding: 20px;
     }
 
+    .hamburger {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 28px;
+      cursor: pointer;
+      z-index: 1100;
+      color: white;
+      padding: 4px 10px;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      right: -250px;
+      width: 250px;
+      height: 100%;
+      background-color: #121212;
+      color: white;
+      padding-top: 60px;
+      transition: right 0.3s ease;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar a {
+      padding: 15px 25px;
+      text-decoration: none;
+      color: white;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .sidebar a:hover {
+      background-color: #303f9f;
+    }
+
     h2 {
-      color: #1a237e;
-      border-bottom: 2px solid #1a237e;
+      color: #90caf9;
+      border-bottom: 2px solid #90caf9;
       padding-bottom: 10px;
       margin-bottom: 20px;
       text-align: center;
@@ -61,24 +61,25 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      background-color: #fff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      background-color: #1e1e1e;
+      color: white;
+      box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
     }
 
     th, td {
-      border: 1px solid #ddd;
+      border: 1px solid #333;
       padding: 12px;
       text-align: left;
       vertical-align: middle;
     }
 
     th {
-      background-color: #e8eaf6;
+      background-color: #263238;
       font-weight: bold;
     }
 
     tr:hover {
-      background-color: #f1f1f1;
+      background-color: #2c2c2c;
     }
 
     .btn {
@@ -89,7 +90,6 @@
       border-radius: 4px;
       cursor: pointer;
       font-size: 14px;
-      transition: background-color 0.3s ease;
     }
 
     .btn:hover {
@@ -101,18 +101,19 @@
       top: 20%;
       left: 50%;
       transform: translateX(-50%);
-      background-color: white;
-      border: 1px solid #ccc;
+      background-color: #1e1e1e;
+      color: white;
+      border: 1px solid #333;
       padding: 20px;
       width: 320px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
       z-index: 100;
       border-radius: 8px;
     }
 
     .upload-card h3 {
       margin-top: 0;
-      color: #1a237e;
+      color: #90caf9;
     }
 
     .hidden {
@@ -123,28 +124,47 @@
       margin-bottom: 15px;
     }
 
-    .form-field input[type="file"] {
-      padding: 5px 0;
+    .form-field label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .form-field input[type="file"],
+    .form-field input[type="text"] {
+      width: 100%;
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #555;
+      background-color: #2c2c2c;
+      color: white;
+    }
+
+    .form-field input[type="file"]::file-selector-button {
+      background-color: #3f51b5;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      cursor: pointer;
     }
 
     a.download-link {
-      color: #3f51b5;
+      color: #64b5f6;
       text-decoration: underline;
     }
   </style>
 </head>
 <body>
-   <div class="hamburger" onclick="toggleMenu()">☰</div>
+  <div class="hamburger" onclick="toggleMenu()">☰</div>
 
-<div id="sidebar" class="sidebar">
-  <a href="request.html">Requestor - Submit Material Trial Request</a>
-  <a href="cmk.html">CMK - Review & Approve Request</a>
-  <a href="ppc.html">PPC - PR Management</a>
-  <a href="procurement.html">Procurement - Ordering and Tracking</a>
-  <a href="stores.html">Stores Team</a>
-  <a href="evaluation.html">Evaluation Team - Material Receipt & Evaluation</a>
-  <a href="cmk2.html">CMK - Final Review and Remarks</a>
-</div>
+  <div id="sidebar" class="sidebar">
+    <a href="request.html">Requestor - Submit Material Trial Request</a>
+    <a href="cmk2.html">CMK Dashboard</a>
+    <a href="ppc.html">PPC - PR Management</a>
+    <a href="procurement.html">Procurement - Ordering and Tracking</a>
+    <a href="stores.html">Stores Team</a>
+    <a href="evaluation.html">Evaluation Team - Material Receipt & Evaluation</a>
+  </div>
+
   <h2>Stores Team</h2>
   <table>
     <thead>
@@ -156,13 +176,6 @@
         <th>Quantity</th>
         <th>Trial</th>
         <th>Purpose</th>
-        <th>Purpose (Other)</th>
-        <th>BIS Required</th>
-        <th>BIS Cost</th>
-        <th>BIS Cost By</th>
-        <th>IEC Required</th>
-        <th>IEC Cost</th>
-        <th>IEC Cost By</th>
         <th>Status</th>
         <th>PR Number</th>
         <th>Material Code</th>
@@ -221,13 +234,6 @@
         <td>${entry.quantity || ''}</td>
         <td>${entry.trial || ''}</td>
         <td>${entry.purpose || ''}</td>
-        <td>${entry.purposeOther || ''}</td>
-        <td>${entry.bisRequired ? 'Yes' : 'No'}</td>
-        <td>${entry.bisCost || ''}</td>
-        <td>${entry.bisCostBy || ''}</td>
-        <td>${entry.iecRequired ? 'Yes' : 'No'}</td>
-        <td>${entry.iecCost || ''}</td>
-        <td>${entry.iecCostBy || ''}</td>
         <td>${entry.status}</td>
         <td>${entry.prNumber || ''}</td>
         <td>${entry.materialCode || ''}</td>
@@ -254,37 +260,64 @@
     }
 
     async function submitUpload() {
-      const file = document.getElementById('fileInput').files[0];
-      const person = document.getElementById('personInput').value.trim();
+  const file = document.getElementById('fileInput').files[0];
+  const person = document.getElementById('personInput').value.trim();
 
-      if (!file || !person) {
-        alert('Please select a file and enter the name of the person in charge.');
-        return;
-      }
+  if (!file || !person) {
+    alert('Please select a file and enter the name of the person in charge.');
+    return;
+  }
 
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('deliveryPerson', person);
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('deliveryPerson', person);
 
-      if (currentStatus === 'Ordered') {
-        formData.append('status', 'Delivered');
-      }
+  if (currentStatus === 'Ordered') {
+    formData.append('status', 'Delivered');
+  }
 
-      const res = await fetch(`${apiURL}/upload/${currentEditId}`, {
-        method: 'POST',
-        body: formData
-      });
+  const res = await fetch(`${apiURL}/upload/${currentEditId}`, {
+    method: 'POST',
+    body: formData
+  });
 
-      if (res.ok) {
-        closeUpload();
-        location.reload();
-      } else {
-        alert('Upload failed.');
-      }
-    }
+  if (res.ok) {
+    closeUpload();
+    location.reload();
+
+    // ✅ Email notification
+    sendEmail(
+      'yuvamloonker@gmail.com',
+      'A new request has been delivered to the factory',
+      `<p> Please log in to the Sample Trials Website to review the delivery document.</p>`
+    );
+  } else {
+    alert('Upload failed.');
+  }
+}
+
     function toggleMenu() {
-  const sidebar = document.getElementById('sidebar');
-  sidebar.style.right = sidebar.style.right === '0px' ? '-100%' : '0px';
+      const sidebar = document.getElementById('sidebar');
+      sidebar.style.right = sidebar.style.right === '0px' ? '-100%' : '0px';
+    }
+
+    function sendEmail(to, subject, htmlContent) {
+  fetch('http://localhost:3000/api/send-email', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      to,
+      subject,
+      htmlContent
+    })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('Failed to send email');
+    console.log('📧 Email sent successfully');
+  })
+  .catch(err => console.error('Email error:', err));
 }
   </script>
 </body>

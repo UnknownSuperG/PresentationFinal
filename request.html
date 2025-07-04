@@ -3,59 +3,60 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Material Request Form</title>
+  <title>Sample Trials</title>
   <style>
-   .hamburger {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  font-size: 28px;
-  cursor: pointer;
-  z-index: 1100; /* Higher than sidebar to stay on top */
-  color: #000000;
-  padding: 4px 10px;
-  border-radius: 4px;
-}
-
-.sidebar {
-  position: fixed;
-  top: 0;
-  right: -250px;
-  width: 250px;
-  height: 100%;
-  background-color: #1a237e;
-  color: white;
-  padding-top: 60px;
-  transition: right 0.3s ease;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar a {
-  padding: 15px 25px;
-  text-decoration: none;
-  color: white;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.sidebar a:hover {
-  background-color: #303f9f;
-}
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #f4f6f9;
-      color: #333;
+      background-color: #121212;
+      color: #ffffff;
       margin: 0;
       padding: 20px;
     }
 
     h2 {
-      color: #1a237e;
-      border-bottom: 2px solid #1a237e;
+      color: #90caf9;
+      border-bottom: 2px solid #90caf9;
       padding-bottom: 10px;
       margin-bottom: 20px;
       text-align: center;
+    }
+
+    .hamburger {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 28px;
+      cursor: pointer;
+      z-index: 1100;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      right: -250px;
+      width: 250px;
+      height: 100%;
+      background-color: #121212;
+      color: white;
+      padding-top: 60px;
+      transition: right 0.3s ease;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar a {
+      padding: 15px 25px;
+      text-decoration: none;
+      color: white;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .sidebar a:hover {
+      background-color: #303f9f;
     }
 
     .header-container {
@@ -65,32 +66,16 @@
     }
 
     .create-btn, .edit-btn, .submit-form-btn {
-      padding: 8px 12px;
+      padding: 10px 12px;
       color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
       font-size: 14px;
+    background-color: #3f51b5;
     }
 
-    .create-btn { 
-      background-color: #3f51b5;
-    }
-    .create-btn:hover { 
-      background-color: #303f9f;
-    }
-
-    .edit-btn { 
-      background-color: #3f51b5;
-    }
-    .edit-btn:hover { 
-      background-color: #303f9f;
-    }
-
-    .submit-form-btn { 
-      background-color: #3f51b5;
-    }
-    .submit-form-btn:hover { 
+    .create-btn:hover, .edit-btn:hover, .submit-form-btn:hover {
       background-color: #303f9f;
     }
 
@@ -98,51 +83,127 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
-      background-color: #fff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      background-color: #1e1e1e;
+      color: white;
+      box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
     }
 
     th, td {
-      border: 1px solid #ddd;
+      border: 1px solid #333;
       padding: 12px;
       text-align: left;
       vertical-align: top;
     }
 
-    th { 
-      background-color: #e8eaf6;
-      font-weight: bold;
-    }
+    th {
+  background-color: #263238;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+}
 
     tr:hover {
-      background-color: #f1f1f1;
+      background-color: #2c2c2c;
     }
 
-    input, select {
+    input, select, textarea {
       width: 100%;
       padding: 6px;
       box-sizing: border-box;
-      border: 1px solid #ddd;
+      border: 1px solid #555;
       border-radius: 4px;
+      background-color: #2c2c2c;
+      color: white;
     }
 
-    input:focus, select:focus {
+    input:focus, select:focus, textarea:focus {
       outline: none;
-      border-color: #3f51b5;
-    }
-
-    .hidden { 
-      display: none; 
-    }
-
-    .other-purpose-input, .remarks-input {
-      margin-top: 5px;
+      border-color: #64b5f6;
     }
 
     input[type="checkbox"] {
       width: auto;
       transform: scale(1.2);
     }
+
+    .hidden {
+      display: none;
+    }
+
+    .other-purpose-input,
+    .remarks-input {
+      margin-top: 5px;
+    }
+    tbody tr:nth-child(even) {
+  background-color: #1a1a1a;
+}
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+  background-color: #1e1e1e;
+  color: white;
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  color: #90caf9;
+}
+
+.modal-content .form-group {
+  margin-bottom: 15px;
+}
+
+.modal-content label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.modal-content input,
+.modal-content select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background-color: #2c2c2c;
+  color: white;
+}
+
+.modal-content button {
+  margin-top: 20px;
+  padding: 10px 16px;
+  background-color: #3f51b5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  float: right;
+  cursor: pointer;
+}
+
+.close-btn {
+  float: right;
+  color: red;
+  font-size: 24px;
+  cursor: pointer;
+}
   </style>
 </head>
 <body>
@@ -150,12 +211,11 @@
 
 <div id="sidebar" class="sidebar">
   <a href="request.html">Requestor - Submit Material Trial Request</a>
-  <a href="cmk.html">CMK - Review & Approve Request</a>
+  <a href="cmk2.html">CMK Dashboard</a>
   <a href="ppc.html">PPC - PR Management</a>
   <a href="procurement.html">Procurement - Ordering and Tracking</a>
   <a href="stores.html">Stores Team</a>
   <a href="evaluation.html">Evaluation Team - Material Receipt & Evaluation</a>
-  <a href="cmk2.html">CMK - Final Review and Remarks</a>
 </div>
 <h2>Requestor - Submit Material Trial Request</h2>
 <div class="header-container">
@@ -177,6 +237,7 @@
       <th>IEC Required</th>
       <th>IEC Cost</th>
       <th>IEC Cost Borne By</th>
+      <th> Status </th>
       <th>Action</th>
     </tr>
   </thead>
@@ -223,6 +284,7 @@ function addDataRow(entry) {
     <td><span>${entry.iecRequired ? 'Yes' : 'No'}</span></td>
     <td><span>${entry.iecCost || ''}</span></td>
     <td><span>${iecCostByText}</span></td>
+    <td><span>${entry.status || ''}</span></td>
     <td><button class="edit-btn" onclick="editRow(this)">Edit</button></td>
   `;
   tbody.appendChild(row);
@@ -232,82 +294,85 @@ function editRow(button) {
   const row = button.closest("tr");
   const spans = row.querySelectorAll("span");
   const values = Array.from(spans).map(s => s.innerText);
-  
+
+  const status = values[13]; // Assuming status is the 14th column (index 13)
+  if (status !== 'Pending') {
+    alert('Only records with status "Pending" can be edited.');
+    return;
+  }
+
   // Get the original data from the row dataset
   const id = row.dataset.id;
-  
-  // We'll need to fetch the original data to get the separate values
-  // For now, let's work with what we have
+
   let purposeOther = '';
   let remarksAgainstOrder = '';
-  
-  // Extract purpose other if it exists
+
   if (values[6] !== 'Quality Improvement' && values[6] !== 'Alternate Vendor Development' && values[6] !== '') {
-    purposeOther = values[6]; // The displayed text is the custom purpose text
+    purposeOther = values[6];
   }
-  
-  // Extract remarks if it exists
+
   if (values[12].startsWith('Against Order: ')) {
     remarksAgainstOrder = values[12].substring(15);
   }
 
   row.innerHTML = `
-<td><input type="date" name="date" value="${values[0]}" /></td>
-<td>
-  <select name="category">
-    <option value="">Select</option>
-    <option value="Cell" ${values[1] === 'Cell' ? 'selected' : ''}>Cell</option>
-    <option value="Junction Box" ${values[1] === 'Junction Box' ? 'selected' : ''}>Junction Box</option>
-    <option value="Sealant" ${values[1] === 'Sealant' ? 'selected' : ''}>Sealant</option>
-    <option value="Encapsulant" ${values[1] === 'Encapsulant' ? 'selected' : ''}>Encapsulant</option>
-    <option value="Backsheet" ${values[1] === 'Backsheet' ? 'selected' : ''}>Backsheet</option>
-    <option value="Connector" ${values[1] === 'Connector' ? 'selected' : ''}>Connector</option>
-    <option value="Glass" ${values[1] === 'Glass' ? 'selected' : ''}>Glass</option>
-    <option value="Flux" ${values[1] === 'Flux' ? 'selected' : ''}>Flux</option>
-    <option value="FG Module" ${values[1] === 'FG Module' ? 'selected' : ''}>FG Module</option>
-  </select>
-</td>
-<td><input type="text" name="details" value="${values[2]}" /></td>
-<td><input type="text" name="supplier" value="${values[3]}" /></td>
-<td><input type="number" name="quantity" value="${values[4]}" min="0" /></td>
-<td>
-  <select name="trial">
-    <option value="">Select</option>
-    <option value="Yes" ${values[5] === 'Yes' ? 'selected' : ''}>Yes</option>
-    <option value="No" ${values[5] === 'No' ? 'selected' : ''}>No</option>
-  </select>
-</td>
-<td>
-  <select name="purpose" onchange="toggleOtherPurpose(this)">
-    <option value="">Select</option>
-    <option value="Quality Improvement" ${values[6] === 'Quality Improvement' ? 'selected' : ''}>Quality Improvement</option>
-    <option value="Alternate Vendor Development" ${values[6] === 'Alternate Vendor Development' ? 'selected' : ''}>Alternate Vendor Development</option>
-    <option value="Others" ${(values[6] !== 'Quality Improvement' && values[6] !== 'Alternate Vendor Development' && values[6] !== '') ? 'selected' : ''}>Others</option>
-  </select>
-  <input type="text" class="other-purpose-input ${(values[6] !== 'Quality Improvement' && values[6] !== 'Alternate Vendor Development' && values[6] !== '') ? '' : 'hidden'}" placeholder="Please specify..." value="${purposeOther}" />
-</td>
-<td><input type="checkbox" name="bisRequired" ${values[7] === 'Yes' ? 'checked' : ''} onchange="toggleBIS(this)" /></td>
-<td><input type="number" class="bis-field ${values[7] === 'Yes' ? '' : 'hidden'}" name="bisCost" value="${values[8]}" /></td>
-<td>
-  <select class="bis-field ${values[7] === 'Yes' ? '' : 'hidden'}" name="bisCostBy">
-    <option value="">Select</option>
-    <option value="Premier" ${values[9] === 'Premier' ? 'selected' : ''}>Premier</option>
-    <option value="Supplier" ${values[9] === 'Supplier' ? 'selected' : ''}>Supplier</option>
-  </select>
-</td>
-<td><input type="checkbox" name="iecRequired" ${values[10] === 'Yes' ? 'checked' : ''} onchange="toggleIEC(this)" /></td>
-<td><input type="number" class="iec-field ${values[10] === 'Yes' ? '' : 'hidden'}" name="iecCost" value="${values[11]}" /></td>
-<td>
-  <select class="iec-field ${values[10] === 'Yes' ? '' : 'hidden'}" name="iecCostBy" onchange="toggleRemarksAgainstOrder(this)">
-    <option value="">Select</option>
-    <option value="Premier" ${values[12] === 'Premier' ? 'selected' : ''}>Premier</option>
-    <option value="Supplier" ${values[12] === 'Supplier' ? 'selected' : ''}>Supplier</option>
-    <option value="Both" ${values[12] === 'Both' ? 'selected' : ''}>Both</option>
-    <option value="Against Order" ${values[12].startsWith('Against Order') ? 'selected' : ''}>Against Order</option>
-  </select>
-  <input type="text" class="remarks-input iec-field ${values[12].startsWith('Against Order') ? '' : 'hidden'}" placeholder="Remarks" value="${remarksAgainstOrder}" />
-</td>
-      <td><button class="submit-form-btn" onclick="saveEdit(this)">Save</button></td>
+    <td><input type="date" name="date" value="${values[0]}" /></td>
+    <td>
+      <select name="category">
+        <option value="">Select</option>
+        <option value="Cell" ${values[1] === 'Cell' ? 'selected' : ''}>Cell</option>
+        <option value="Junction Box" ${values[1] === 'Junction Box' ? 'selected' : ''}>Junction Box</option>
+        <option value="Sealant" ${values[1] === 'Sealant' ? 'selected' : ''}>Sealant</option>
+        <option value="Encapsulant" ${values[1] === 'Encapsulant' ? 'selected' : ''}>Encapsulant</option>
+        <option value="Backsheet" ${values[1] === 'Backsheet' ? 'selected' : ''}>Backsheet</option>
+        <option value="Connector" ${values[1] === 'Connector' ? 'selected' : ''}>Connector</option>
+        <option value="Glass" ${values[1] === 'Glass' ? 'selected' : ''}>Glass</option>
+        <option value="Flux" ${values[1] === 'Flux' ? 'selected' : ''}>Flux</option>
+        <option value="FG Module" ${values[1] === 'FG Module' ? 'selected' : ''}>FG Module</option>
+      </select>
+    </td>
+    <td><input type="text" name="details" value="${values[2]}" /></td>
+    <td><input type="text" name="supplier" value="${values[3]}" /></td>
+    <td><input type="number" name="quantity" value="${values[4]}" min="0" /></td>
+    <td>
+      <select name="trial">
+        <option value="">Select</option>
+        <option value="Yes" ${values[5] === 'Yes' ? 'selected' : ''}>Yes</option>
+        <option value="No" ${values[5] === 'No' ? 'selected' : ''}>No</option>
+      </select>
+    </td>
+    <td>
+      <select name="purpose" onchange="toggleOtherPurpose(this)">
+        <option value="">Select</option>
+        <option value="Quality Improvement" ${values[6] === 'Quality Improvement' ? 'selected' : ''}>Quality Improvement</option>
+        <option value="Alternate Vendor Development" ${values[6] === 'Alternate Vendor Development' ? 'selected' : ''}>Alternate Vendor Development</option>
+        <option value="Others" ${(values[6] !== 'Quality Improvement' && values[6] !== 'Alternate Vendor Development' && values[6] !== '') ? 'selected' : ''}>Others</option>
+      </select>
+      <input type="text" class="other-purpose-input ${(values[6] !== 'Quality Improvement' && values[6] !== 'Alternate Vendor Development' && values[6] !== '') ? '' : 'hidden'}" placeholder="Please specify..." value="${purposeOther}" />
+    </td>
+    <td><input type="checkbox" name="bisRequired" ${values[7] === 'Yes' ? 'checked' : ''} onchange="toggleBIS(this)" /></td>
+    <td><input type="number" class="bis-field ${values[7] === 'Yes' ? '' : 'hidden'}" name="bisCost" value="${values[8]}" /></td>
+    <td>
+      <select class="bis-field ${values[7] === 'Yes' ? '' : 'hidden'}" name="bisCostBy">
+        <option value="">Select</option>
+        <option value="Premier" ${values[9] === 'Premier' ? 'selected' : ''}>Premier</option>
+        <option value="Supplier" ${values[9] === 'Supplier' ? 'selected' : ''}>Supplier</option>
+      </select>
+    </td>
+    <td><input type="checkbox" name="iecRequired" ${values[10] === 'Yes' ? 'checked' : ''} onchange="toggleIEC(this)" /></td>
+    <td><input type="number" class="iec-field ${values[10] === 'Yes' ? '' : 'hidden'}" name="iecCost" value="${values[11]}" /></td>
+    <td>
+      <select class="iec-field ${values[10] === 'Yes' ? '' : 'hidden'}" name="iecCostBy" onchange="toggleRemarksAgainstOrder(this)">
+        <option value="">Select</option>
+        <option value="Premier" ${values[12] === 'Premier' ? 'selected' : ''}>Premier</option>
+        <option value="Supplier" ${values[12] === 'Supplier' ? 'selected' : ''}>Supplier</option>
+        <option value="Both" ${values[12] === 'Both' ? 'selected' : ''}>Both</option>
+        <option value="Against Order" ${values[12].startsWith('Against Order') ? 'selected' : ''}>Against Order</option>
+      </select>
+      <input type="text" class="remarks-input iec-field ${values[12].startsWith('Against Order') ? '' : 'hidden'}" placeholder="Remarks" value="${remarksAgainstOrder}" />
+    </td>
+    <td><span>${entry.status || ''}</span></td>
+    <td><button class="submit-form-btn" onclick="saveEdit(this)">Save</button></td>
   `;
 }
 
@@ -440,6 +505,7 @@ function addFormRow() {
       </select>
       <input type="text" class="remarks-input iec-field hidden" placeholder="Remarks" />
     </td>
+    <td>Pending</td>
     <td><button class="submit-form-btn" onclick="submitForm(this)">Submit</button></td>
   `;
 
@@ -475,22 +541,58 @@ async function submitForm(button) {
     remarksAgainstOrder: row.querySelector('.remarks-input')?.value || ''
   };
 
-  console.log("Submitting data:", data);
+  try {
+    const res = await fetch('http://localhost:3000/api/requests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
 
-  const res = await fetch('http://localhost:3000/api/requests', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  });
+    if (!res.ok) {
+      console.error('❌ Failed to submit:', await res.text());
+      return;
+    }
 
-  const saved = await res.json();
-  row.remove();
-  addDataRow(saved);
+    const saved = await res.json();  // ✅ only read body once
+
+    row.remove();
+    addDataRow(saved);
+
+    // ✅ Send email notification
+    sendEmail(
+      'yuvamloonker@gmail.com', // or use any email of your team
+      'New Material Trial Request Created',
+      `
+        <p>A new material trial request has been created</p>
+      `
+    );
+
+  } catch (err) {
+    console.error('❌ Error:', err);
+  }
 }
   function toggleMenu() {
     const sidebar = document.getElementById('sidebar');
     sidebar.style.right = sidebar.style.right === '0px' ? '-250px' : '0px';
   }
+  function sendEmail(to, subject, htmlContent) {
+  fetch('http://localhost:3000/api/send-email', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      to,
+      subject,
+      htmlContent
+    })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('Failed to send email');
+    console.log('📧 Email sent successfully');
+  })
+  .catch(err => console.error('Email error:', err));
+}
 </script>
 </body>
 </html>

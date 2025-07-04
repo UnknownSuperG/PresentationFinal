@@ -1,4 +1,5 @@
-// Combined backend using MongoDB Native Driver + Mongoose
+// Combined backend using MongoDB Native Driver + Mongoose and Microsoft Graph API for email
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -6,6 +7,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const axios = require('axios');
 
 const app = express();
 const PORT = 3000;
@@ -20,7 +22,7 @@ if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads');
 }
 
-// Multer Setup - keep original file names (optional)
+// Multer Setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
   filename: (req, file, cb) => {
@@ -72,55 +74,14 @@ const RequestSchema = new mongoose.Schema({
 const Request = mongoose.model('Request', RequestSchema);
 
 let nativeDB;
-
 MongoClient.connect(mongoURI)
   .then(client => {
     console.log('✅ MongoClient connected');
     nativeDB = client.db(dbName);
-
-    const collection = nativeDB.collection(collectionName);
-    collection.countDocuments({ status: "Pending CMK Approval" }).then(count => {
-      if (count === 0) {
-        console.log("Inserting sample data...");
-        collection.insertMany([
-          {
-            date: '',
-            category: '',
-            details: '',
-            supplier: '',
-            quantity: 25,
-            trial: '',
-            purpose: '',
-            purposeOther: '',
-            bisRequired: true,
-            bisCost: null,
-            bisCostBy: '',
-            iecRequired: false,
-            iecCost: null,
-            iecCostBy: '',
-            status: 'Pending CMK Approval',
-            prNumber: '',
-            materialCode: '',
-            materialDescription: '',
-            deliveryDate: '',
-            remarks: '',
-            deliveryFile: '',
-            deliveryPerson: '',
-            evaluationDate: '',
-            evaluationReport: '',
-            cmkRemarks: ''
-          }
-        ]);
-      }
-    });
   })
-  .catch(error => {
-    console.error('❌ MongoClient connection error:', error);
-  });
+  .catch(error => console.error('❌ MongoClient connection error:', error));
 
-// ----- Routes -----
-
-// GET all requests
+// Routes
 app.get('/api/requests', async (req, res) => {
   try {
     const requests = await Request.find().sort({ createdAt: -1 });
@@ -130,7 +91,6 @@ app.get('/api/requests', async (req, res) => {
   }
 });
 
-// GET single request by ID
 app.get('/api/requests/:id', async (req, res) => {
   try {
     const request = await Request.findById(req.params.id);
@@ -141,7 +101,6 @@ app.get('/api/requests/:id', async (req, res) => {
   }
 });
 
-// POST new request
 app.post('/api/requests', async (req, res) => {
   try {
     const filledRequest = {
@@ -158,7 +117,6 @@ app.post('/api/requests', async (req, res) => {
       cmkRemarks: "",
       ...req.body
     };
-
     const newRequest = new Request(filledRequest);
     const saved = await newRequest.save();
     res.status(201).json(saved);
@@ -167,78 +125,58 @@ app.post('/api/requests', async (req, res) => {
   }
 });
 
-// PUT update request
 app.put(['/api/requests/:id', '/api/trials/:id'], async (req, res) => {
   try {
     const allowedFields = [
-      'date', 'category', 'details', 'supplier', 'quantity', 'trial', 'purpose', 'purposeOther',
-      'bisRequired', 'bisCost', 'bisCostBy', 'iecRequired', 'iecCost', 'iecCostBy',
-      'status', 'prNumber', 'materialCode', 'materialDescription', 'deliveryDate', 'remarks',
-      'deliveryFile', 'deliveryPerson', 'evaluationDate', 'evaluationReport', 'cmkRemarks'
+      'date','category','details','supplier','quantity','trial','purpose','purposeOther',
+      'bisRequired','bisCost','bisCostBy','iecRequired','iecCost','iecCostBy','status',
+      'prNumber','materialCode','materialDescription','deliveryDate','remarks','deliveryFile',
+      'deliveryPerson','evaluationDate','evaluationReport','cmkRemarks'
     ];
-
     const updateFields = {};
     for (const key of allowedFields) {
-      if (req.body.hasOwnProperty(key)) {
-        updateFields[key] = req.body[key];
-      }
+      if (req.body.hasOwnProperty(key)) updateFields[key] = req.body[key];
     }
-
-    const updated = await Request.findByIdAndUpdate(
-      req.params.id,
-      { $set: updateFields },
-      { new: true }
-    );
-
+    const updated = await Request.findByIdAndUpdate(req.params.id, { $set: updateFields }, { new: true });
     if (!updated) return res.status(404).json({ error: 'Request not found' });
-
     res.status(200).json({ message: `Request ${req.params.id} updated successfully.`, data: updated });
   } catch (err) {
     res.status(400).json({ error: 'Failed to update request', details: err.message });
   }
 });
 
-// POST file upload for proof of delivery
 app.post('/api/requests/upload/:id', upload.single('file'), async (req, res) => {
   try {
     const { deliveryPerson } = req.body;
     const deliveryFile = req.file?.filename;
-
     const updated = await Request.findByIdAndUpdate(
       req.params.id,
       { $set: { deliveryPerson, deliveryFile, status: 'Delivered' } },
       { new: true }
     );
-
     if (!updated) return res.status(404).json({ error: 'Request not found' });
-
     res.status(200).json({ message: 'Upload successful', data: updated });
   } catch (err) {
     res.status(500).json({ error: 'Upload failed', details: err.message });
   }
 });
 
-// POST file upload for evaluation report
 app.post('/api/requests/evaluation/:id', upload.single('file'), async (req, res) => {
   try {
     const { evaluationDate } = req.body;
     const evaluationReport = req.file?.filename;
-
     const updated = await Request.findByIdAndUpdate(
       req.params.id,
       { $set: { evaluationDate, evaluationReport, status: 'Received' } },
       { new: true }
     );
-
     if (!updated) return res.status(404).json({ error: 'Request not found' });
-
     res.status(200).json({ message: 'Evaluation submitted.', data: updated });
   } catch (err) {
     res.status(500).json({ error: 'Evaluation upload failed', details: err.message });
   }
 });
 
-// Native driver route
 app.get('/api/trials', async (req, res) => {
   try {
     const trials = await nativeDB.collection(collectionName).find({}).toArray();
@@ -248,7 +186,41 @@ app.get('/api/trials', async (req, res) => {
   }
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Backend running at http://localhost:${PORT}`);
+// Email with Microsoft Graph API
+app.post('/api/send-email', async (req, res) => {
+  const { to, subject, htmlContent } = req.body;
+  try {
+    const tokenRes = await axios.post(`https://login.microsoftonline.com/${process.env.TENANT_ID}/oauth2/v2.0/token`,
+      new URLSearchParams({
+        client_id: process.env.CLIENT_ID,
+        client_secret: process.env.CLIENT_SECRET,
+        grant_type: 'client_credentials',
+        scope: 'https://graph.microsoft.com/.default'
+      }),
+      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+    );
+    const accessToken = tokenRes.data.access_token;
+
+    const sendRes = await axios.post(`https://graph.microsoft.com/v1.0/users/${process.env.SENDER_EMAIL}/sendMail`, {
+      message: {
+        subject,
+        body: {
+          contentType: 'HTML',
+          content: htmlContent
+        },
+        toRecipients: [{ emailAddress: { address: to } }]
+      }
+    }, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    res.status(200).json({ message: 'Email sent successfully.' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to send email', details: err.message });
+  }
 });
+
+app.listen(PORT, () => console.log(`🚀 Backend running at http://localhost:${PORT}`));

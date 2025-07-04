@@ -1,246 +1,585 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CMK Dashboard - Review Requests</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Sample Trials</title>
   <style>
-    .hamburger {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  font-size: 28px;
-  cursor: pointer;
-  z-index: 1100; /* Higher than sidebar to stay on top */
-  color: #000000;
-  padding: 4px 10px;
-  border-radius: 4px;
-}
-
-.sidebar {
-  position: fixed;
-  top: 0;
-  right: -250px;
-  width: 250px;
-  height: 100%;
-  background-color: #1a237e;
-  color: white;
-  padding-top: 60px;
-  transition: right 0.3s ease;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar a {
-  padding: 15px 25px;
-  text-decoration: none;
-  color: white;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.sidebar a:hover {
-  background-color: #303f9f;
-}
+    /* Theme & Layout */
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f6f9;
-      color: #333;
-      margin: 0;
-      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      margin:0;
+      padding:20px;
     }
+    .hamburger {
+      position: fixed; top:20px; right:20px; font-size:28px;
+      cursor:pointer; z-index:1100; color:white; padding:4px 10px; border-radius:4px;
+    }
+    .sidebar {
+      position:fixed; top:0; right:-250px; width:250px; height:100%;
+      background:#121212; color:white; padding-top:60px;
+      transition:right .3s ease; z-index:1000; display:flex; flex-direction:column;
+    }
+    .sidebar a {
+      padding:15px 25px; text-decoration:none; color:white;
+      border-bottom:1px solid rgba(255,255,255,0.2);
+    }
+    .sidebar a:hover { background:#303f9f; }
     h1 {
-      color: #1a237e;
-      border-bottom: 2px solid #1a237e;
-      padding-bottom: 10px;
+      color:#90caf9;
+      text-align:center;
+      border-bottom:2px solid #90caf9;
+      padding-bottom:10px;
+      margin-bottom:10px;
+    }
+    .tabs {
+      display:flex;
+      justify-content:center;
+      margin-bottom:15px;
+    }
+    .tab {
+      padding:10px 20px;
+      cursor:pointer;
+      background:#1e1e1e;
+      margin:0 5px;
+      border-radius:4px;
+      color:#bbb;
+    }
+    .tab.active {
+      background:#3f51b5;
+      color:white;
     }
     table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: #fff;
-      margin-top: 20px;
+      width:100%;
+      border-collapse:collapse;
+      background:#1e1e1e;
+      box-shadow:0 2px 4px rgba(0,0,0,0.4);
     }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 12px;
-      text-align: left;
+    th,td {
+      border:1px solid #333;
+      padding:12px;
+      text-align:left;
+      vertical-align:top;
+      color:white;
     }
     th {
-      background-color: #e8eaf6;
+      background:#263238;
+      font-weight:bold;
+    }
+    tr:hover {
+      background:#1f1f1f;
     }
     .btn {
-      padding: 6px 10px;
-      background-color: #3f51b5;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
+      padding:6px 10px;
+      background:#3f51b5;
+      color:white;
+      border:none;
+      border-radius:4px;
+      cursor:pointer;
+      font-size:14px;
     }
     .btn:hover {
-      background-color: #303f9f;
+      background:#303f9f;
     }
+    a.download-link {
+      color:#90caf9;
+      text-decoration:none;
+    }
+    a.download-link:hover {
+      text-decoration:underline;
+    }
+    /* Modal */
     .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 1000;
+      display:none;
+      position:fixed;
+      top:0;left:0;
+      width:100%;height:100%;
+      background:rgba(0,0,0,0.7);
+      z-index:1000;
     }
     .modal-content {
-      background: white;
-      margin: 10% auto;
-      padding: 20px;
-      width: 400px;
-      border-radius: 8px;
+      background:#1e1e1e;
+      color:white;
+      margin:5% auto;
+      padding:20px;
+      width:60%;
+      max-width:800px;
+      max-height:75vh;
+      overflow-y:auto;
+      border-radius:8px;
+      position:relative;
+      box-shadow:0 5px 15px rgba(0,0,0,0.5);
     }
-    .close {
-      float: right;
-      font-size: 24px;
-      cursor: pointer;
+    .close-button {
+      position:absolute;
+      top:10px;right:20px;
+      font-size:28px;
+      cursor:pointer;
+      color:#ccc;
     }
-    textarea {
-      width: 100%;
-      height: 100px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+    .close-button:hover {
+      color:white;
     }
-    .submit-btn {
-      margin-top: 10px;
-      background-color: #4caf50;
+    .modal-section {
+      margin-bottom:20px;
     }
+    .modal-section h3 {
+      border-bottom:1px solid #444;
+      padding-bottom:8px;
+      margin:0;
+      color:#90caf9;
+    }
+    .details-grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:15px;
+    }
+    .detail-item {
+      padding:5px;
+    }
+    .detail-item strong {
+      display:block;
+      color:#ccc;
+      margin-bottom:4px;
+    }
+    #cmk-action-buttons button {
+    background:#4caf50;
+    color:white;
+    margin-right: 20px;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 6px;
+    border:none;
+    }
+      #cmk-action-buttons .approve {
+    background-color: #4caf50;
+    color:white;
+    margin-right: 20px;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 6px;
+    border:none;
+  }
+
+  #cmk-action-buttons .reject {
+    background-color: #f44336;
+    color:white;
+    margin-right: 20px;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 6px;
+    border:none;
+
+  }
+    #cmk-action-buttons button.selected {
+      border:2px solid #90caf9;
+      box-shadow:0 0 5px rgba(144,202,249,0.5);
+    }
+    #conditional-actions {
+      padding:15px;
+      background:#263238;
+      border:1px solid #444;
+      border-radius:5px;
+    }
+    #conditional-actions label {
+      display:block;
+      margin-bottom:5px;
+      font-weight:bold;
+    }
+    #conditional-actions input,#conditional-actions select {
+      width:95%;
+      padding:8px;
+      margin-bottom:10px;
+      border:1px solid #555;
+      border-radius:4px;
+      background:#2a2a2a;
+      color:white;
+    }
+    #rao-sir-notification {
+      color:#ff8a80;
+      padding:10px;
+      background:#4e1c1c;
+      border-radius:4px;
+      display:none;
+    }
+    #submit-decision-button {
+      margin-top:20px;
+      padding:12px 25px;
+      background-color: #3f51b5;
+      color:white;
+      border:none;
+      border-radius:5px;
+      cursor:pointer;
+      float:right;
+    }
+    .page-title { margin-top:0; }
+
+    .remark-modal-content {
+  background: #1e1e1e;
+  color: white;
+  width: 500px;
+  height: 310px;
+  margin: 10% auto;
+  border-radius: 8px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.remark-modal-content h3 {
+  margin-right: 20px ;
+  color: #90caf9;
+  text-align: center;
+  border-bottom: 1px solid #444;
+  padding-bottom: 10px;
+}
+
+.remark-close {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  font-size: 26px;
+  color: #ccc;
+  cursor: pointer;
+}
+.remark-close:hover {
+  color: white;
+}
+
+.remark-body {
+  width: 400px;
+  justify-content: center;
+  padding-left: 35px;
+}
+
+.remark-textarea {
+  width: 100%;
+  height: 100px;
+  padding: 12px;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background-color: #2a2a2a;
+  color: white;
+  resize: vertical;
+  font-size: 14px;
+}
+
+.remark-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.remark-submit-btn {
+  padding: 12px 25px;
+  background-color: #3f51b5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  margin: 15px;
+}
+
+.remark-submit-btn:hover {
+  background-color: #303f9f;
+}
   </style>
 </head>
 <body>
-  <div class="hamburger" onclick="toggleMenu()">☰</div>
 
-<div id="sidebar" class="sidebar">
-  <a href="request.html">Requestor - Submit Material Trial Request</a>
-  <a href="cmk.html">CMK - Review & Approve Request</a>
-  <a href="ppc.html">PPC - PR Management</a>
-  <a href="procurement.html">Procurement - Ordering and Tracking</a>
-  <a href="stores.html">Stores Team</a>
-  <a href="evaluation.html">Evaluation Team - Material Receipt & Evaluation</a>
-  <a href="cmk2.html">CMK - Final Review and Remarks</a>
-</div>
-  <h1>CMK Dashboard - Review Requests</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Material Category</th>
-        <th>Material Details</th>
-        <th>Supplier</th>
-        <th>Quantity</th>
-        <th>Trial</th>
-        <th>Purpose</th>
-        <th>BIS Required</th>
-        <th>BIS Cost</th>
-        <th>BIS Cost Borne By</th>
-        <th>IEC Required</th>
-        <th>IEC Cost</th>
-        <th>IEC Cost Borne By</th>
-        <th>PR Number</th>
-        <th>Material Code</th>
-        <th>Material Description</th>
-        <th>Delivery Date</th>
-        <th>Remarks</th>
-        <th>Proof of Delivery</th>
-        <th>Person In-Charge</th>
-        <th>Evaluation Date</th>
-        <th>Evaluation Report</th>
-        <th>CMK Remarks</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="requestBody"></tbody>
+  <div class="hamburger" onclick="toggleMenu()">☰</div>
+  <div id="sidebar" class="sidebar">
+    <a href="request.html">Requestor - Submit Material Trial Request</a>
+    <a href="cmk2.html">CMK Dashboard</a>
+    <a href="ppc.html">PPC - PR Management</a>
+    <a href="procurement.html">Procurement - Ordering and Tracking</a>
+    <a href="stores.html">Stores Team</a>
+    <a href="evaluation.html">Evaluation Team - Material Receipt & Evaluation</a>
+  </div>
+
+  <h1 class="page-title">CMK Dashboard</h1>
+
+  <div class="tabs">
+    <div id="tab-pending" class="tab active" onclick="switchTab('pending')">Pending</div>
+    <div id="tab-received" class="tab" onclick="switchTab('received')">Received</div>
+    <div id="tab-all" class="tab" onclick="switchTab('all')">All</div>
+  </div>
+
+  <table class="request-table" id="requestList">
+  <thead id="tableHead">
+
+  </thead>
+    <tbody></tbody>
   </table>
 
-  <div class="modal" id="remarkModal">
+  <!-- Pending/Approve Modal -->
+  <div id="requestModal" class="modal">
     <div class="modal-content">
-      <span class="close" onclick="closeModal()">&times;</span>
-      <h3>Give your remarks after reading the evaluation report</h3>
-      <textarea id="remarkText" placeholder="Enter your remarks..."></textarea>
-      <button class="btn submit-btn" onclick="submitRemark()">Submit</button>
+      <span class="close-button" onclick="closeModal()">&times;</span>
+      <div class="modal-section">
+        <h3>Request Details</h3>
+        <div class="details-grid" id="modal-fields-container"></div>
+      </div>
+      <div class="modal-section">
+        <h3>CMK Action</h3>
+        <div id="cmk-action-buttons">
+          <button class="approve" data-action="Approve Trial Run">Approve Trial Run</button>
+          <button class="approve" data-action="Approve Pilot Run">Approve Pilot Run</button>
+          <button class="reject" data-action="Reject">Reject</button>
+        </div>
+      </div>
+      <div id="conditional-actions" style="display:none">
+        <label>Edit Qty</label>
+        <input id="editable-quantity"/>
+        <label>Select Plant</label>
+        <select id="plant-select">
+          <option>-- Select Plant --</option>
+          <option>P1</option><option>P2</option><option>P3</option><option>P4</option><option>P5</option><option>P6</option>
+        </select>
+        <div id="rao-sir-notification">Note: P4/P5/P6 selected. Rao sir will be notified.</div>
+      </div>
+      <button id="submit-decision-button" onclick="handleSubmit()">Forward to PPC</button>
+      <div style="clear:both;"></div>
     </div>
   </div>
 
-  <script>
-    const API_URL = 'http://localhost:3000/api/requests';
-    const tbody = document.getElementById('requestBody');
-    let currentId = null;
+  <!-- Received Remarks Modal -->
+ <!-- Received Remarks Modal -->
+<div id="remarkModal" class="modal">
+  <div class="remark-modal-content">
+    <span class="remark-close" onclick="closeRemarkModal()">&times;</span>
+    <h3>Give remarks after evaluation</h3>
+    
+    <div class="remark-body">
+      <textarea id="remarkText" class="remark-textarea" placeholder="Enter your remarks..."></textarea>
+    </div>
+    
+    <div class="remark-footer">
+      <button class="remark-submit-btn" onclick="submitRemark()">Submit Remark</button>
+    </div>
+  </div>
+</div>
+  </div>
 
-    async function fetchData() {
-      const res = await fetch(API_URL);
-      const data = await res.json();
-      tbody.innerHTML = '';
+<script>
+  const HEADERS = {
+  pending: ['Date', 'Category', 'Details', 'Supplier', 'Qty', 'Trial', 'Purpose', 'BIS Required', 'BIS Cost', 'BIS Cost Borne By', 'IEC Required', 'IEC Cost', 'IEC Cost Borne By', 'Status', 'Action'],
+  received: ['Date', 'Category', 'Details', 'Supplier', 'Qty', 'Trial', 'Purpose','BIS Required', 'BIS Cost', 'BIS Cost Borne By', 'IEC Required', 'IEC Cost', 'IEC Cost Borne By', 'Material Description', '	PR Number', 'Material Code', 'Delivery Date', 'Remarks', 'Proof of Delivery', 'Person In-Charge', 'Evaluation Date', 'Evaluation Report', 'CMK Remarks', 'Status', 'Action'],
+  all: ['Date', 'Category', 'Details', 'Supplier', 'Qty', 'Trial', 'Purpose','BIS Required', 'BIS Cost', 'BIS Cost Borne By', 'IEC Required', 'IEC Cost', 'IEC Cost Borne By', 'Material Description', '	PR Number', 'Material Code', 'Delivery Date', 'Remarks', 'Proof of Delivery', 'Person In-Charge', 'Evaluation Date', 'Evaluation Report', 'CMK Remarks','Status']
+};
+let currentTab='pending', dataAll=[], currentRequest=null, currentRemarkId=null, currentDecision=null;
 
-      data.filter(d => d.status === 'Received').forEach(entry => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${entry.date || ''}</td>
-          <td>${entry.category || ''}</td>
-          <td>${entry.details || ''}</td>
-          <td>${entry.supplier || ''}</td>
-          <td>${entry.quantity || ''}</td>
-          <td>${entry.trial || ''}</td>
-          <td>${entry.purpose || ''}</td>
-          <td>${entry.bisRequired ? 'Yes' : 'No'}</td>
-          <td>${entry.bisCost || ''}</td>
-          <td>${entry.bisCostBy || ''}</td>
-          <td>${entry.iecRequired ? 'Yes' : 'No'}</td>
-          <td>${entry.iecCost || ''}</td>
-          <td>${entry.iecCostBy || ''}</td>
-          <td>${entry.prNumber || ''}</td>
-          <td>${entry.materialCode || ''}</td>
-          <td>${entry.materialDescription || ''}</td>
-          <td>${entry.deliveryDate || ''}</td>
-          <td>${entry.remarks || ''}</td>
-          <td>${entry.deliveryFile ? `<a href='/uploads/${entry.deliveryFile}' target='_blank' download>Download</a>` : ''}</td>
-          <td>${entry.deliveryPerson || ''}</td>
-          <td>${entry.evaluationDate || ''}</td>
-          <td>${entry.evaluationReport ? `<a href='/uploads/${entry.evaluationReport}' target='_blank' download>Download</a>` : ''}</td>
-          <td>${entry.cmkRemarks || ''}</td>
-          <td>${entry.status}</td>
-          <td><button class='btn' onclick="openModal('${entry._id}')">Remark</button></td>
-        `;
-        tbody.appendChild(row);
-      });
-    }
-
-    function openModal(id) {
-      currentId = id;
-      document.getElementById('remarkModal').style.display = 'block';
-    }
-
-    function closeModal() {
-      document.getElementById('remarkModal').style.display = 'none';
-      document.getElementById('remarkText').value = '';
-    }
-
-    async function submitRemark() {
-      const remark = document.getElementById('remarkText').value.trim();
-      if (!remark) return alert('Please enter a remark.');
-
-      await fetch(`${API_URL}/${currentId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cmkRemarks: remark })
-      });
-
-      closeModal();
-      fetchData();
-    }
-
-    fetchData();
-    function toggleMenu() {
-  const sidebar = document.getElementById('sidebar');
-  sidebar.style.right = sidebar.style.right === '0px' ? '-100%' : '0px';
+async function loadData(){
+  const res=await fetch('http://localhost:3000/api/requests');
+  dataAll=await res.json();
+  renderTab();
 }
-  </script>
+
+function renderTab() {
+  const thead = document.getElementById('tableHead');
+  const tbody = document.querySelector('#requestList tbody');
+  tbody.innerHTML = '';
+
+  // Set dynamic table headers
+  thead.innerHTML = `<tr>${HEADERS[currentTab].map(h => `<th>${h}</th>`).join('')}</tr>`;
+
+  // Filter data for current tab
+  const subset = dataAll.filter(item =>
+    currentTab === 'all' ? true :
+    currentTab === 'pending' ? item.status === 'Pending' :
+    item.status === 'Received'
+  );
+
+  // Populate rows
+  subset.forEach(item => {
+    const row = document.createElement('tr');
+
+    if (currentTab === 'pending') {
+      row.innerHTML = `
+        <td>${item.date || ''}</td>
+        <td>${item.category || ''}</td>
+        <td>${item.details || ''}</td>
+        <td>${item.supplier || ''}</td>
+        <td>${item.quantity || ''}</td>
+        <td>${item.trial || ''}</td>
+        <td>${item.purpose || ''}</td>
+        <td>${item.bisRequired ? 'Yes' : 'No'}</td>
+        <td>${item.bisCost || ''}</td>
+        <td>${item.bisCostBy || ''}</td>
+        <td>${item.iecRequired ? 'Yes' : 'No'}</td>
+        <td>${item.iecCost || ''}</td>
+        <td>${item.iecCostBy || ''}</td>
+        <td>${item.status}</td>
+        <td>
+          <button class="btn" onclick='openRequestModal(${JSON.stringify(item)})'>View & Decide</button>
+        </td>
+      `;
+    } else {
+      row.innerHTML = `
+        <td>${item.date || ''}</td>
+        <td>${item.category || ''}</td>
+        <td>${item.details || ''}</td>
+        <td>${item.supplier || ''}</td>
+        <td>${item.quantity || ''}</td>
+        <td>${item.trial || ''}</td>
+        <td>${item.purpose || ''}</td>
+        <td>${item.bisRequired ? 'Yes' : 'No'}</td>
+        <td>${item.bisCost || ''}</td>
+        <td>${item.bisCostBy || ''}</td>
+        <td>${item.iecRequired ? 'Yes' : 'No'}</td>
+        <td>${item.iecCost || ''}</td>
+        <td>${item.iecCostBy || ''}</td>
+        <td>${item.materialDescription || ''}</td>
+        <td>${item.prNumber || ''}</td>
+        <td>${item.materialCode || ''}</td>
+        <td>${item.deliveryDate || ''}</td>
+        <td>${item.remarks || ''}</td>
+        <td>${item.deliveryFile ? `<a class="download-link" href="/uploads/${item.deliveryFile}" target="_blank" download>Download</a>` : ''}</td>
+        <td>${item.deliveryPerson || ''}</td>
+        <td>${item.evaluationDate || ''}</td>
+        <td>${item.evaluationReport ? `<a class="download-link" href="/uploads/${item.evaluationReport}" target="_blank" download>Download</a>` : ''}</td>
+        <td>${item.cmkRemarks || ''}</td>
+        <td>${item.status}</td>
+        <td>
+          ${currentTab === 'received'
+            ? `<button class="btn" onclick="openRemarkModal('${item._id}')">Remark</button>`
+            : ''}
+        </td>
+      `;
+    }
+
+    tbody.appendChild(row);
+  });
+}
+
+function switchTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active',el.id===`tab-${tab}`));
+  renderTab();
+}
+
+// Pending modal
+const actionButtons=document.querySelectorAll('#cmk-action-buttons button');
+actionButtons.forEach(b=>b.onclick=(e)=>{
+  currentDecision=e.target.dataset.action;
+  actionButtons.forEach(x=>x.classList.remove('selected'));
+  e.target.classList.add('selected');
+  document.getElementById('conditional-actions').style.display = currentDecision.startsWith('Approve') ? 'block':'none';
+});
+function openRequestModal(item){
+  currentRequest=item;
+  const div=document.getElementById('modal-fields-container');
+  div.innerHTML = Object.entries(item).map(([k,v])=>
+    `<div class="detail-item"><strong>${k.replace(/([A-Z])/g,' $1')}:</strong><span>${v||''}</span></div>`
+  ).join('');
+  document.getElementById('editable-quantity').value=item.quantity;
+  document.getElementById('requestModal').style.display='block';
+}
+function closeModal(){
+  document.getElementById('requestModal').style.display='none';
+  document.querySelectorAll('#cmk-action-buttons button').forEach(x=>x.classList.remove('selected'));
+  document.getElementById('conditional-actions').style.display='none';
+}
+async function handleSubmit() {
+  if (!currentDecision) return alert('Select action');
+
+  const qty = document.getElementById('editable-quantity').value;
+  const plant = document.getElementById('plant-select').value;
+
+  if (currentDecision !== 'Reject' && !plant) return alert('Select plant');
+
+  const status =
+    currentDecision === 'Reject'
+      ? 'Rejected'
+      : currentDecision === 'Approve Trial Run'
+      ? 'Approved for Trial Run'
+      : 'Approved for Pilot Run';
+
+  const updateData = {
+    quantity: qty,
+    plant,
+    status,
+  };
+
+  try {
+    const res = await fetch(`${API_URL}/${currentRequest._id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updateData),
+    });
+
+    if (!res.ok) {
+      console.error('Failed to update:', await res.text());
+      return;
+    }
+
+    // Trigger email after successful update
+    sendEmail(
+      'yuvamloonker@gmail.com',
+      'CMK has changed the status of a new request',
+      `
+        <p><strong>Updated Status:</strong> ${status}</p>
+        <p>Check the Sample Trials website for full details.</p>
+      `
+    );
+
+    closeModal();
+    loadData();
+  } catch (err) {
+    console.error('❌ Error submitting decision:', err);
+    alert('Failed to submit decision.');
+  }
+}
+
+// Received remarks modal
+function openRemarkModal(id){
+  currentRemarkId=id;
+  document.getElementById('remarkModal').style.display='block';
+}
+function closeRemarkModal(){
+  currentRemarkId=null;
+  document.getElementById('remarkText').value='';
+  document.getElementById('remarkModal').style.display='none';
+}
+async function submitRemark(){
+  const text=document.getElementById('remarkText').value.trim();
+  if(!text) return alert('Enter remark');
+  await fetch(`${API_URL}/${currentRemarkId}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({cmkRemarks:text})});
+  closeRemarkModal();
+  loadData();
+}
+
+// Toggle sidebar & tabs
+const API_URL='http://localhost:3000/api/requests';
+function toggleMenu(){
+  const s=document.getElementById('sidebar');
+  s.style.right = s.style.right==='0px'?'-250px':'0px';
+}
+
+// Start
+loadData();
+function sendEmail(to, subject, htmlContent) {
+  fetch('http://localhost:3000/api/send-email', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      to,
+      subject,
+      htmlContent
+    })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('Failed to send email');
+    console.log('📧 Email sent successfully');
+  })
+  .catch(err => console.error('Email error:', err));
+}
+</script>
 </body>
 </html>
